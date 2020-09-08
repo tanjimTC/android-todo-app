@@ -11,15 +11,9 @@ import {
 import Header from "./components/header";
 import TodoItem from "./components/todoItem";
 import AddTodo from "./components/addTodo";
-import { AsyncStorage } from "react-native";
 
 export default function App() {
-  const [todos, setTodos] = useState([
-    { text: "buy coffee", key: "1" },
-    { text: "create an app", key: "2" },
-    { text: "play on the switch", key: "3" },
-  ]);
-  const [job, setJob] = useState([]);
+  const [todos, setTodos] = useState();
 
   const pressHandler = (key) => {
     setTodos((prevTodos) => {
@@ -33,12 +27,26 @@ export default function App() {
       setTodos((prevTodos) => {
         return [{ text, key: Math.random().toString() }, ...prevTodos];
       });
-      let obj = [{ text: text, key: Math.random().toString() }];
-      console.log("ami new data", typeof obj);
       try {
-        let prevData = await AsyncStorage.getItem("todos");
-        console.log("previous datas", prevData);
-        await AsyncStorage.setItem("todos", (prevData += JSON.stringify(obj)));
+        await fetch("https://android-todo-app-backend.herokuapp.com/todos", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            blogTitle: text,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => console.log(data));
+
+        await fetch("https://android-todo-app-backend.herokuapp.com/todos")
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            setTodos(data);
+          });
       } catch (error) {
         alert("oilona", error);
       }
@@ -48,6 +56,17 @@ export default function App() {
       ]);
     }
   };
+  useEffect(() => {
+    async function fetchMyAPI() {
+      await fetch("https://android-todo-app-backend.herokuapp.com/todos")
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          setTodos(data);
+        });
+    }
+    fetchMyAPI();
+  }, []);
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -57,12 +76,15 @@ export default function App() {
           <View style={styles.content}>
             <AddTodo submitHandler={submitHandler} />
             <View style={styles.list}>
-              <FlatList
-                data={todos}
-                renderItem={({ item }) => (
-                  <TodoItem item={item} pressHandler={pressHandler} />
-                )}
-              />
+              {todos && (
+                <FlatList
+                  data={todos}
+                  renderItem={({ item }) => (
+                    <TodoItem item={item} pressHandler={pressHandler} />
+                  )}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              )}
             </View>
           </View>
         </ScrollView>
