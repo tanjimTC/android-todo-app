@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, TextInput, Button } from 'react-native';
+import { AsyncStorage } from "react-native";
 
 export default function AddTodo({ submitHandler }) {
   [text, setText] = useState('');
@@ -7,6 +8,10 @@ export default function AddTodo({ submitHandler }) {
   const changeHandler = (val) => {
     setText(val);
   };
+  const submitHandler2 = async ()=>{
+    // await AsyncStorage.setItem("todos" , '');
+    alert('fuck you')
+  }
 
   return (
     <View>
@@ -16,7 +21,10 @@ export default function AddTodo({ submitHandler }) {
         onChangeText={changeHandler} 
         value={text} 
       />
+      <View style={styles.addBtn}> 
       <Button color='coral' onPress={() => submitHandler(text)} title='add todo' />
+      </View>
+      <Button color='coral' onPress={() => submitHandler2()} title='clear todo' />
     </View>
   );
 }
@@ -29,4 +37,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
+  addBtn :{
+    marginBottom: 10,
+    color: 'green'
+  }
 });

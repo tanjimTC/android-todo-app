@@ -19,6 +19,7 @@ export default function App() {
     { text: "create an app", key: "2" },
     { text: "play on the switch", key: "3" },
   ]);
+  const [job, setJob] = useState([]);
 
   const pressHandler = (key) => {
     setTodos((prevTodos) => {
@@ -26,47 +27,27 @@ export default function App() {
     });
   };
 
-  const submitHandler = (text) => {
+  const submitHandler = async (text) => {
     if (text.length > 3) {
       setText("");
       setTodos((prevTodos) => {
         return [{ text, key: Math.random().toString() }, ...prevTodos];
       });
-      let obj = { text: text, key: Math.random().toString() };
-      console.log("ami new data", obj);
-      AsyncStorage.setItem("todos", JSON.stringify(obj));
+      let obj = [{ text: text, key: Math.random().toString() }];
+      console.log("ami new data", typeof obj);
+      try {
+        let prevData = await AsyncStorage.getItem("todos");
+        console.log("previous datas", prevData);
+        await AsyncStorage.setItem("todos", (prevData += JSON.stringify(obj)));
+      } catch (error) {
+        alert("oilona", error);
+      }
     } else {
       Alert.alert("OOPS", "Todo must be over 3 characters long", [
         { text: "Understood", onPress: () => console.log("alert closed") },
       ]);
     }
   };
-
-  // useEffect(() => {
-  //   async function fetchMyAPI() {
-  //     let user = await AsyncStorage.getItem("todos");
-  //     console.log("haha", user);
-  //     // setTodos([
-  //     //   {text: user.map((x) => x.task),
-  //     //   key: user.map((y) => y.key)}
-  //     // ])
-  //   }
-  //   fetchMyAPI();
-  // }, []);
-
-  const displayData = async () => {
-    try {
-      let user = await AsyncStorage.getItem("todos");
-      console.log('ball', user)
-      let parsed = await JSON.parse(user);
-      console.log("parsed data", parsed);
-    } catch (error) {
-      alert(error);
-    }
-  };
-  useEffect(() => {
-    displayData();
-  }, []);
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
