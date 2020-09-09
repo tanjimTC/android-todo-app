@@ -15,18 +15,31 @@ import AddTodo from "./components/addTodo";
 export default function App() {
   const [todos, setTodos] = useState();
 
-  const pressHandler = (key) => {
-    setTodos((prevTodos) => {
-      return prevTodos.filter((todo) => todo.key != key);
-    });
+  const pressHandler = async (key) => {
+    try {
+      await fetch(
+        "https://android-todo-app-backend.herokuapp.com/todos/" + key,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      await fetch("https://android-todo-app-backend.herokuapp.com/todos")
+        .then((response) => response.json())
+        .then((data) => {
+          setTodos(data);
+        });
+    } catch (error) {
+      alert("Something went wrong!", error);
+    }
   };
 
   const submitHandler = async (text) => {
     if (text.length > 3) {
       setText("");
-      setTodos((prevTodos) => {
-        return [{ text, key: Math.random().toString() }, ...prevTodos];
-      });
       try {
         await fetch("https://android-todo-app-backend.herokuapp.com/todos", {
           method: "POST",
@@ -37,18 +50,15 @@ export default function App() {
           body: JSON.stringify({
             blogTitle: text,
           }),
-        })
-          .then((response) => response.json())
-          .then((data) => console.log(data));
+        });
 
         await fetch("https://android-todo-app-backend.herokuapp.com/todos")
           .then((response) => response.json())
           .then((data) => {
-            console.log(data);
             setTodos(data);
           });
       } catch (error) {
-        alert("oilona", error);
+        alert("Something went wrong!", error);
       }
     } else {
       Alert.alert("OOPS", "Todo must be over 3 characters long", [
@@ -60,10 +70,7 @@ export default function App() {
     async function fetchMyAPI() {
       await fetch("https://android-todo-app-backend.herokuapp.com/todos")
         .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-          setTodos(data);
-        });
+        .then((data) => setTodos(data));
     }
     fetchMyAPI();
   }, []);

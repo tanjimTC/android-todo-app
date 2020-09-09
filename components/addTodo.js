@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import { StyleSheet, View, TextInput, Button } from "react-native";
-import { AsyncStorage } from "react-native";
 
 export default function AddTodo({ submitHandler }) {
   [text, setText] = useState("");
-
   const changeHandler = (val) => {
     setText(val);
   };
   const submitHandler2 = async () => {
-    alert("All the data will be removed");
+    alert("This functionality is under construction!");
   };
 
   return (
@@ -20,6 +18,7 @@ export default function AddTodo({ submitHandler }) {
         onChangeText={changeHandler}
         value={text}
       />
+
       <View style={styles.addBtn}>
         <Button
           color="coral"
