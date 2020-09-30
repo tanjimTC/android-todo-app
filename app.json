@@ -4,11 +4,15 @@
     "slug": "my-project",
     "privacy": "public",
     "sdkVersion": "35.0.0",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "platforms": ["ios", "android", "web"],
+    "android": {
+      "package": "com.tc.todos",
+      "versionCode": 1
+    },
+    "ios": {
+      "bundleIdentifier": "com.tc.todos",
+      "buildNumber": "1.0.0"
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,11 +24,6 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    }
+    "assetBundlePatterns": ["**/*"]
   }
 }
